@@ -1,4 +1,4 @@
-# ESP32-S3 based NMEA2000 Display with Autopilot and Alarm Handling
+# ESP32-S3 NMEA2000 Display with Autopilot, Alarms and Actisense UDP over Wi-Fi
 
 <p>
   <img src="images/nmeadisplay.jpg" alt="Real Display" width="500">
