@@ -6,6 +6,14 @@
 
 Based on the original **francissailor** project and on work by Homberger and Timo Lappalainen.
 
+## Side Project for the NMEA2000 Gateway
+
+This display is a side project for the [ESP32 NMEA2000 Multiprotocol Gateway](https://github.com/JaCharer/ESP32_NMEA2000_Multiprotocol_Gateway). The gateway reads data from the NMEA2000 network and broadcasts it over Wi-Fi as Signal K, NMEA 0183, and Actisense Binary streams.
+
+This makes it possible to place dedicated instruments wherever they are needed on the boat. The instruments can receive NMEA2000 data over Wi-Fi and do not need a direct physical connection to the NMEA2000 network. This display currently uses the gateway's Actisense Binary over UDP stream.
+
+The gateway also includes an onboard AIS parser for Class A and Class B targets and a browser-based WebGUI with navigation, engine, wind, weather, and tank data. It supports integration with OpenCPN, Navionics, Avalon Offshore, and other Signal K software, and its basic navigation features work without an internet connection.
+
 ## Information About This Version
 
 This project is based on the original **francissailor** project. Thank you to francissailor for creating and sharing it. The **Actisense BIN over UDP** stream reception functionality was added to the original project, allowing NMEA2000 data to be received over Wi-Fi as well.
