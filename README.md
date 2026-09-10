@@ -4,13 +4,13 @@
   <img src="images/nmeadisplay.jpg" alt="Real Display" width="500">
 </p>
 
-Based on work by Homberger, Timo Lappalainen and Fraciss Sailer
+Based on the original **francissailor** project and on work by Homberger and Timo Lappalainen.
 
 ## Information About This Version
 
-This project is based on the original **francissailor** software. Thank you to francissailor for creating and sharing the original project. The **Actisense BIN over UDP** stream reception functionality was added to the original project, allowing NMEA2000 data to be received over Wi-Fi as well.
+This project is based on the original **francissailor** project. Thank you to francissailor for creating and sharing it. The **Actisense BIN over UDP** stream reception functionality was added to the original project, allowing NMEA2000 data to be received over Wi-Fi as well.
 
-The original project was adapted to compile and upload in the **PlatformIO** environment. With this version, no additional tool or separate sketch is required to upload files to the FFAT partition. Simply compile the project, upload the firmware, and upload the FFAT filesystem image using PlatformIO.
+The original project was adapted to compile and upload in the **PlatformIO** environment. Simply compile the project, upload the firmware, and upload the FFAT filesystem image using PlatformIO.
 
 The UDP stream is enabled on the dedicated configuration page on the display: **Settings > Network**. The UDP connection is receive-only at present. It can receive NMEA2000 data, but it cannot be used to control the autopilot.
 
@@ -35,21 +35,12 @@ A DIY NMEA2000 display for the Waveshare ESP32-S3-Touch-LCD-4, with autopilot su
 - The display is **not ruggedized** for outdoor use
 - The housing is **not watertight** and is not designed for outdoor exposure
 
-I am still hoping that Waveshare will eventually offer a higher-brightness version of this board. If that would also help your use case, please consider asking them for a high-nit version of the **ESP32-S3-Touch-LCD-4** through their support page on the Waveshare wiki.
+Hopefully, Waveshare will eventually offer a higher-brightness version of this board. If that would also help your use case, please consider asking them for a high-nit version of the **ESP32-S3-Touch-LCD-4** through their support page on the Waveshare wiki.
 
 ## Hardware Required
 
 - **Waveshare ESP32-S3-Touch-LCD-4, Version 4**
 - An **NMEA2000 cable** compatible with your boat network  
-  In my case, I used a **Raymarine Spur cable**
-
-### Note on Version 3 boards
-
-The full source package for Version 3 boards is not included. I can provide the Version 3 source files on request. Some functionality is limited on Version 3 boards:
-
-- No backlight control
-- Power-up is not automatic; you need to use the power key
-- I also do not plan further updates to the V3 version anymore !!
 
 ## Screenshots
 
@@ -65,20 +56,9 @@ The full source package for Version 3 boards is not included. I can provide the 
 
 *These are screenshots, so they are not animated and do not show live NMEA2000 values.*
 
-## Why I Built This
-
-My Raymarine ST70 display was no longer functioning correctly. Replacing it with a new one would have cost roughly **€500 to €600**, so I started looking for an alternative. In the end, the only affordable option was to build and program it myself.
-
-My main goals were:
-
-- Keep it affordable
-- Create a user interface that was comparable to, or better than, the old Raymarine display
-- Avoid a custom PCB
-- Avoid soldering if possible
-
 ## Hardware
 
-After some searching, I found the **Waveshare ESP32-S3-Touch-LCD-4** board, which includes:
+The project uses the **Waveshare ESP32-S3-Touch-LCD-4** board, which includes:
 
 - Integrated CAN bus
 - Supply voltage up to 37 V
@@ -88,17 +68,15 @@ The board costs about **€35**, and no soldering is required.
 
 **Important:** there are different versions of this board. Make sure the one you buy has the **integrated CAN bus** and is version 4.
 
-The board is delivered without a housing, so I designed a housing for it in **FreeCAD**.
+The board is delivered without a housing, so the original project includes a housing designed in **FreeCAD**.
 
 ## Software Development
 
-The project is built and uploaded with **PlatformIO**.  
-For the user interface, I used **SquareLine Studio**.  
-For the NMEA2000 stack, I used the well-known library by **Timo Lappalainen**:
+The project is built and uploaded with **PlatformIO**.
+The user interface was designed with **SquareLine Studio**.
+The NMEA2000 stack is based on the work of **Timo Lappalainen**:
 
 - [Timo Lappalainen on GitHub](https://github.com/ttlappalainen)
-
-After about six months of development, and with a little help from ChatGPT for some routines, I am happy to share the finished project.
 
 ## Software Notes
 
@@ -106,19 +84,19 @@ This software uses the ESP32-S3 quite heavily:
 
 - The **NMEA2000 library and decoding logic** run in a FreeRTOS task on **core 0**
 - Using core 0 was necessary because the NMEA2000 network can be busy at high data rates
-- With a single large sketch running on core 1, I was missing some NMEA2000 messages
-- The user interface stores graphical assets in a **9.9 MB FFAT partition**
+- With a single large sketch running on core 1, the system was missing some NMEA2000 messages
+- The user interface stores graphical assets in a **FFAT partition**
 - At startup, those assets are copied into **PSRAM**
 - The normal flash partition for the sketch is too small for all graphics
 - PSRAM is much faster than reading graphical assets directly from flash, which improves screen refresh performance
 
-The graphical assets are uploaded separately as an FFAT filesystem image, but PlatformIO handles this directly. The separate **FFAT uploader sketch** is not required when using this project with PlatformIO.
+The graphical assets are uploaded separately as an FFAT filesystem image, and PlatformIO handles this directly.
 
 There is also a small auxiliary FreeRTOS task for the onboard beeper. When the beeper routine was integrated directly into the UI sketch using `millis()`, the beeps became irregular because of the screen update load.
 
 ### Important for people modifying the code
 
-The LCD on this Waveshare board uses an **RGB interface**, so LCD timing is critical. I fine-tuned the timing values in `lvgl_port_v8.h`. Changing those settings can corrupt the display.
+The LCD on this Waveshare board uses an **RGB interface**, so LCD timing is critical. The timing values in `lvgl_port_v8.h` have been carefully fine-tuned. Changing those settings can corrupt the display.
 
 Please also pay close attention to the library versions recommended on the Waveshare wiki:
 
@@ -128,11 +106,13 @@ This also affects which version of **SquareLine Studio** you can use, because re
 
 **Modifying this project is not for beginners.**
 
-## Remark on last version of the program:
-In the software there is a provision for a board mod. I developped this mod because when i powered my board from the NMEA network it needed a push on the reset button to start.
-This mod solves that problem. In the main ino sketch lines 165 and 168 need to be uncommented if you use a modded board.
-If you don't encounter the problem i had, there is NO NEED TO MOD THE BOARD.
-For more in detail explanations read the file in the pdf documentation folder.
+## Board Modification
+
+Some boards may require a hardware modification to start automatically when powered from the NMEA2000 network. This modification is not required if your board starts normally, and it should not be carried out unless you have this specific problem.
+
+For the complete explanation of the modification, wiring details, and the required software changes, please refer to the documentation in the original project:
+
+[Original NMEA2000-DISPLAY-on-ESP32S3 project](https://github.com/yetimilas/NMEA2000-DISPLAY-on-ESP32S3)
 
 ## Build from Source
 
@@ -204,11 +184,13 @@ If you add or replace assets, the new assets will be in the **drive** folder. Yo
 
 ## Housing
 
-The housing files are included in the **`Freecad`** folder.
+The housing files are included in the **`Freecad`** folder. The housing was designed for this display and includes files for direct 3D printing.
 
-The housing was designed in **FreeCAD 1.0**, but the files are also compatible with **FreeCAD 1.1**. Files for direct 3D printing are included as well.
+For complete information about the housing, FreeCAD compatibility, mounting, and assembly, please refer to the documentation in the original project:
 
-There are mounting holes for **2.5 mm screws**, but I found that it is very easy to crack the LCD glass if the screws are tightened even a little too much. I now glue the display in place instead, which is safer.
+[Original NMEA2000-DISPLAY-on-ESP32S3 project](https://github.com/yetimilas/NMEA2000-DISPLAY-on-ESP32S3)
+
+Take particular care when mounting the display. Tightening the **2.5 mm screws** too much can crack the LCD glass. Gluing the display in place may be safer.
 
 ## Hardware Connections
 
