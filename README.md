@@ -58,7 +58,7 @@ The full source package for Version 3 boards is not included. I can provide the 
 </p>
 
 <p>
-  <img src="images/screenshots-page3.png" alt="Settings and apparent wind angle screenshots" width="850">
+  <img src="images/screenshots-page3.png" alt="Settings and apparent wind angle screenshots" width="425">
   <img src="images/settings_screen.png" alt="Settings screenshot" width="425">
   <img src="images/wifi_setings_screen.png" alt="WiFi Settings screenshot" width="425">
 </p>
