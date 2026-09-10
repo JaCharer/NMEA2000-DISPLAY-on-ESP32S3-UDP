@@ -4,7 +4,7 @@
   <img src="images/nmeadisplay.jpg" alt="Real Display" width="500">
 </p>
 
-Based on work by Homberger and Timo Lappalainen.
+Based on work by Homberger, Timo Lappalainen and Fraciss Sailer
 
 ## Information About This Version
 
@@ -16,8 +16,8 @@ The UDP stream is enabled on the dedicated configuration page on the display: **
 
 A DIY NMEA2000 display for the Waveshare ESP32-S3-Touch-LCD-4, with autopilot support, alarm handling, and a touchscreen user interface designed as an affordable replacement for older marine displays such as the Raymarine ST70.
 
-> **☕ If this project helps you, you're welcome to support it here:** [Buy Me a Coffee](https://buymeacoffee.com/francissailor)  
-> Even a small contribution helps me keep improving the project. I am using the funding to develop a watertight and sunlight readable screen as to be able to use it outdoors / in the cockpit. 
+> **☕ If this project helps you, please support the original author, `francissailor`, by buying him a coffee:** [Buy Me a Coffee](https://buymeacoffee.com/francissailor)  
+> Even a small contribution helps him keep improving the project. The funding is being used to develop a watertight, sunlight-readable screen for outdoor and cockpit use.
 
 ## What to Expect
 
@@ -45,7 +45,7 @@ I am still hoping that Waveshare will eventually offer a higher-brightness versi
 
 ### Note on Version 3 boards
 
-I have included a flash file for Version 3 boards, but not the full source package. I can provide the Version 3 source files on request. Some functionality is limited on Version 3 boards:
+The full source package for Version 3 boards is not included. I can provide the Version 3 source files on request. Some functionality is limited on Version 3 boards:
 
 - No backlight control
 - Power-up is not automatic; you need to use the power key
@@ -59,6 +59,8 @@ I have included a flash file for Version 3 boards, but not the full source packa
 
 <p>
   <img src="images/screenshots-page3.png" alt="Settings and apparent wind angle screenshots" width="850">
+  <img src="images/settings_screen.png" alt="Settings screenshot" width="850">
+  <img src="images/wifi_settings_screen.png" alt="WiFi Settings screenshot" width="850">
 </p>
 
 *These are screenshots, so they are not animated and do not show live NMEA2000 values.*
@@ -90,7 +92,7 @@ The board is delivered without a housing, so I designed a housing for it in **Fr
 
 ## Software Development
 
-I developed the sketch in the **Arduino IDE**.  
+The project is built and uploaded with **PlatformIO**.  
 For the user interface, I used **SquareLine Studio**.  
 For the NMEA2000 stack, I used the well-known library by **Timo Lappalainen**:
 
@@ -132,43 +134,6 @@ This mod solves that problem. In the main ino sketch lines 165 and 168 need to b
 If you don't encounter the problem i had, there is NO NEED TO MOD THE BOARD.
 For more in detail explanations read the file in the pdf documentation folder.
 
-## Easy Method: Flash the Ready-Made Binary
-
-In the repository there is a directory called **`bin file`**. It contains ready-made firmware generated with **ESPConnect**:
-
-- [ESPConnect](https://thelastoutpostworkshop.github.io/ESPConnect/)
-
-Choose the binary that matches your board version (**Version 3** or **Version 4**).
-The bin file "Version4 modded" is ONLY to be used if you modded your board (see above and in the pdf documentation folder)
-
-### Flashing with ESPConnect
-
-1. Connect to the ESP32-S3 using the correct USB port.
-
-<p>
-  <img src="images/espconnect-connect.png" alt="ESPConnect connect button" width="680">
-</p>
-
-2. Open **Flash Tools**.
-
-<p>
-  <img src="images/espconnect-flash-tools.png" alt="ESPConnect Flash Tools section" width="410">
-</p>
-
-3. In **Flash Firmware**, select the correct `.bin` file from the `bin file` directory.
-
-<p>
-  <img src="images/espconnect-select-bin.png" alt="ESPConnect firmware binary selection" width="850">
-</p>
-
-4. Click **Flash Firmware**.
-
-<p>
-  <img src="images/espconnect-flash-button.png" alt="ESPConnect flash firmware button" width="420">
-</p>
-
-That is it. Once flashing is complete, you only need to connect the board to your boat network.
-
 ## Build from Source
 
 The source files and libraries are included in their respective folders.
@@ -193,32 +158,6 @@ pio run --target uploadfs
 The first command uploads the firmware and partition table. The second command creates an FFAT image from `data/` and uploads it to the `ffat` partition. The files will be stored on the board as `/ffat/assets/*.bin`.
 
 The UDP Actisense connection can be configured on the dedicated **Settings > Network** screen. The screen stores the Wi-Fi name, password, source IP, local port, source port, and UDP enable state in flash memory. Use source port `0` to accept any UDP source port. Press **Save** to store the settings and restart the device. The UDP stream is receive-only and cannot currently control the autopilot.
-
-### 2. Compile and upload the sketch in the Arduino IDE (legacy alternative)
-
-The Arduino IDE workflow can still be used, but it requires the separate **`FFATuploader`** sketch to upload the assets. This is only a legacy alternative. PlatformIO users do not need this additional tool; use the `uploadfs` command above.
-
-This part is straightforward, but pay attention to the following.
-
-#### Board manager
-
-Use the correct ESP32 board package in the Arduino IDE. In my setup, I used **ESP32 board manager version 3.3.7**.
-
-<p>
-  <img src="images/arduino-board-manager.png" alt="Arduino IDE ESP32 board manager version" width="470">
-</p>
-
-#### Board settings
-
-Use the correct settings for the Waveshare board.
-
-<p>
-  <img src="images/arduino-board-settings.png" alt="Arduino IDE board settings for the Waveshare board" width="460">
-</p>
-
-After that, compiling and uploading should work normally.
-
-As a side note: I originally started this project on **Windows 10**, where compilation in the Arduino IDE was painfully slow. After moving to **Linux Mint** in dual boot, compilation became much faster.
 
 ## SquareLine Studio Project
 
@@ -250,12 +189,12 @@ When SquareLine Studio exports the UI, two folders are important:
 
 ### Important file copy rule
 
-Copy all files from the **`UI files`** folder into the Arduino sketch folder **except**:
+Copy all files from the **`UI files`** folder into the project's source folders **except**:
 
 - `ui_img_manager.c`
 - `ui_img_manager.h`
 
-Those two files are already present in the Arduino sketch folder in modified form so they can work with PSRAM.
+Those two files are already present in the project in modified form so they can work with PSRAM.
 
 <p>
   <img src="images/squareline-do-not-copy-ui-img-manager.png" alt="Files that should not be overwritten" width="780">
@@ -288,10 +227,10 @@ For **Raymarine Seatalk NG**, the wire colors are:
 
 ## Contact
 
-If you have problems, or if you need more clarification, please send me an email:
+This is an adapted version of the original project. For questions, support, and the latest information, please visit the original repository:
 
-**franciscontact@hotmail.com**
+[NMEA2000-DISPLAY-on-ESP32S3](https://github.com/yetimilas/NMEA2000-DISPLAY-on-ESP32S3)
 
 ---
 
-> **☕ If you found this project useful, you can support it here:** [Buy Me a Coffee](https://buymeacoffee.com/francissailor)
+> **☕ If you found this project useful, please support the original author, `francissailor`, by buying him a coffee:** [Buy Me a Coffee](https://buymeacoffee.com/francissailor)
