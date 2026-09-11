@@ -111,7 +111,6 @@ void receiveUdpDatagrams() {
 } // namespace
 
 bool udp_actisense_begin(void) {
-  udp_config_load(&activeConfig);
   if (!activeConfig.enabled) {
     Serial.println("UDP Actisense: disabled");
     return false;
@@ -164,6 +163,10 @@ bool udp_actisense_begin(void) {
     Serial.println(activeConfig.remote_port);
   }
   return true;
+}
+
+void udp_actisense_load_config(void) {
+  udp_config_load(&activeConfig);
 }
 
 void udp_actisense_process(void) {

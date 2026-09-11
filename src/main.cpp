@@ -407,7 +407,7 @@ void Update_Unit_Labels() { // updates all labels on all screens when units are 
   N2K::A_SPD = 0.05f;
 }
 
-void read_UnitSettings2Flash(){
+void read_UnitSettings2Flash(bool updateUi){
   // Namespace to access variables in flash, true = read only, false = read / write
   if (FlashStorage.begin("Units_Space", true)) {
     Unit_Initialise = FlashStorage.getInt("Unit_Initialise",0);
@@ -421,7 +421,7 @@ void read_UnitSettings2Flash(){
     Unit_Silence_Alarm = FlashStorage.getBool("Unit_Sil_Alm", false); 
     FlashStorage.end();
   }
-  Update_Unit_Labels();
+  if (updateUi) Update_Unit_Labels();
 }
 
 void BeepOnce(lv_event_t * e) { // button press event on settings screen, just beeps
@@ -458,7 +458,7 @@ void DoInitSettingsScr(lv_event_t * e){  // is called before displaying the sett
   // if (!N2K::isSetupPortalActive())  // if the AP wifi settings portal was not active, we should activate it.
   //   N2K::startSetupPortal(); // only used if the input data comes from wifi, we have to build a check here that stops using this if we are using physical NMEA2000 connection
   
-  read_UnitSettings2Flash();
+  read_UnitSettings2Flash(true);
   lv_dropdown_set_selected(ui_SpeedDropdown, Unit_Speed);
   lv_dropdown_set_selected(ui_PostionDropdown, Unit_Position);
   lv_dropdown_set_selected(ui_DistanceDropdown, Unit_Distance);
@@ -1361,6 +1361,20 @@ void setup() {
     vTaskDelay(100);
     //handleOneShotStartupReset();  // if you have a modded board uncomment this
 
+    read_UnitSettings2Flash(false);
+    if (Unit_Initialise != 444) {
+      Unit_Initialise = 444;
+      Unit_Speed = 0;
+      Unit_Position = 0;
+      Unit_Distance = 0;
+      Unit_Wind = 0;
+      Unit_Depth = 0;
+      Unit_Wind_Damping = 50;
+      Unit_Heading_Damping = 50;
+      write_UnitSettings2Flash();
+    }
+    udp_actisense_load_config();
+
     if (!Rev4Board::Begin()) {
       Serial.println("V4 board init failed");
     }
@@ -1425,20 +1439,6 @@ void setup() {
     NMEA2000.Open();
 
     udp_actisense_begin();
-
-    read_UnitSettings2Flash();
-    if (Unit_Initialise != 444) {   // variables were not initialized in flash, so we will initialize them
-    // initialize my variables
-    Unit_Initialise = 444;
-    Unit_Speed = 0;
-    Unit_Position = 0;
-    Unit_Distance = 0;
-    Unit_Wind = 0;
-    Unit_Depth = 0;
-    Unit_Wind_Damping = 50;
-    Unit_Heading_Damping = 50;
-    write_UnitSettings2Flash();
-  }
 
   if (!Rev4Board::StartBeeperTask(1, 1, 2048)) {
     Serial.println("V4 beeper task creation failed");
